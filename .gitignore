@@ -1,0 +1,51 @@
+# OS / Editors
+.DS_Store
+Thumbs.db
+desktop.ini
+*.swp
+*.swo
+.idea/
+.vscode/
+*.code-workspace
+~$*
+*.lnk
+
+# Quarto / render outputs and caches
+_site/
+_freeze/
+.quarto/
+*_cache/
+*.utf8.md
+*_files/
+
+# Python caches
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+.ipynb_checkpoints/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.coverage
+coverage.xml
+.cache/
+
+# Node (if present)
+node_modules/
+dist/
+build/
+
+# Logs / temps
+*.log
+*.tmp
+*.bak
+
+# Optional: ignore large local artifacts (uncomment if you don't want to push them)
+# models/
+# runs/
+
+# NOTE: venv is intentionally NOT ignored for your reproducibility preference.
+runs/
+models/archive/
+reports/archive/ 
