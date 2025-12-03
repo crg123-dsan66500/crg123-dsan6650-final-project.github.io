@@ -1,0 +1,324 @@
+[
+  {
+    "objectID": "results.html",
+    "href": "results.html",
+    "title": "Results",
+    "section": "",
+    "text": "The empirical performance of all agents in Bellman’s Bakery is summarized below. The results should be read through the lens of reward shaping and capacity constraints: throughput is limited by both service speed and oven space, while the shaped reward penalizes waiting, abandonment, and excess inventory. Within this structure, agents learn to optimize the reward they are given—not necessarily profit. The Newsvendor heuristic achieves relatively high profit by baking aggressively and accepting waste as a cost of doing business. PPO, by contrast, learns a conservative, low-waste strategy that under-produces and sacrifices margin. QRDQN explores more broadly and improves profit in some runs, but its decisions still reflect the incentives baked into the reward function. Pricing focused solely on profit increases margins slightly but leaves the production strategy mostly unchanged."
+  },
+  {
+    "objectID": "results.html#full-horizon-evaluation",
+    "href": "results.html#full-horizon-evaluation",
+    "title": "Results",
+    "section": "Full-Horizon Evaluation",
+    "text": "Full-Horizon Evaluation\nMetrics aggregate 10 independent seeds; each seed is evaluated for 20 full days (240 ticks/day) under non‑stationary demand. Daily results are averaged per seed and then across seeds to approximate long‑run behavior.\n\n\n\n\n\n\n\n\n\n\nPolicy\nNet Profit\nAbandoned\nAvg Wait (s)\nWaste\n\n\n\n\nNewsvendor (best)\n95.22\n1.5%\n12.7\n41.1%\n\n\nPPO v3 best\n35.28\n74.7%\n49.1\n14.2%\n\n\nPPO+Price v3 best\n23.36\n81.3%\n52.1\n37.7%\n\n\nPPO+Par 1e6\n-20.47\n91.1%\n56.0\n82.8%\n\n\nPPO+Price (profit-only)\n25.79\n83.5%\n53.2\n44.5%\n\n\nQRDQN 1e6\n41.32\n21.2%\n22.7\n44.9%\n\n\n\n\nInterpretation\nNewsvendor dominates by baking aggressively, tolerating waste, and sustaining throughput. In contrast, PPO gravitates toward an under-producing regime, shaped by an objective that penalizes waiting, abandonment, and leftover inventory. The resulting behavior achieves very low waste, but at a cost: chronic stockouts, high abandonment, and long waits. In short, PPO is optimal for the reward it sees—not for economic profit.\nBandit variants follow a similar pattern. Composite-metric pricing amplifies the agent’s conservative stance, while profit-only pricing pushes margins slightly higher without meaningfully shifting production behavior. PPO+Par performs worst overall, as the par mechanism locks the agent into persistent underproduction with no viable path to adjust.\nTakeaway: The RL agents are not failing. They are learning exactly what they were told to optimize—and that turns out to be the wrong thing."
+  },
+  {
+    "objectID": "results.html#weekly-aggregation-a-check-for-robustness",
+    "href": "results.html#weekly-aggregation-a-check-for-robustness",
+    "title": "Results",
+    "section": "Weekly Aggregation: A check for robustness",
+    "text": "Weekly Aggregation: A check for robustness\nTo test robustness to non‑stationarity, results are aggregated over 5 consecutive days per seed (20 seeds total), mimicking week‑level operations. Variance increases, but rank ordering and qualitative behavior remain unchanged.\n\n\n\n\n\n\n\n\n\n\nPolicy\nNet Profit\nAbandoned\nAvg Wait (s)\nWaste\n\n\n\n\nNewsvendor weekly\n25.58\n0.4%\n11.5\n40.3%\n\n\nPPO weekly\n20.17\n79.8%\n50.6\n52.6%\n\n\nPPO+Price weekly\n22.68\n81.7%\n52.0\n38.6%\n\n\nPPO+Par weekly\n-20.74\n90.9%\n55.7\n82.8%\n\n\nPPO+Price (profit-only) weekly\n26.36\n83.4%\n52.8\n44.1%\n\n\nQRDQN weekly\n29.04\n21.6%\n22.9\n46.9%\n\n\n\nRankings persist across seeds and week windows, and paired 95% CIs exclude zero, indicating the gaps reflect the reward/capacity structure rather than random variation."
+  },
+  {
+    "objectID": "results.html#statistical-analysis-per-seed",
+    "href": "results.html#statistical-analysis-per-seed",
+    "title": "Results",
+    "section": "Statistical analysis (per-seed)",
+    "text": "Statistical analysis (per-seed)\nPer-seed mean profit and 95% confidence intervals are computed (normal approximation over seed means), and paired differences versus Newsvendor are reported (bootstrap 95% CIs).\n\n\n\nPolicy\nSeeds (n)\nMean profit\n95% CI (±)\n\n\n\n\nNewsvendor\n10\n103.21\n3.95\n\n\nPPO\n10\n35.28\n1.07\n\n\nQRDQN\n10\n41.32\n11.76\n\n\n\nPaired differences vs Newsvendor (per-seed): - PPO − Newsvendor: −67.94 (95% CI [−72.11, −63.68], n=10) - QRDQN − Newsvendor: −61.89 (95% CI [−71.45, −51.60], n=10)\nThese intervals confirm the large gaps observed in the tables and are not explained by sampling noise."
+  },
+  {
+    "objectID": "results.html#training-dynamics",
+    "href": "results.html#training-dynamics",
+    "title": "Results",
+    "section": "Training Dynamics",
+    "text": "Training Dynamics\nTraining stability is assessed via rollout and evaluation reward curves.\n\n\nAcross methods, there is no divergence or collapse; learning curves are smooth, and observed behavior follows from reward alignment rather than optimization failure."
+  },
+  {
+    "objectID": "results.html#demonstrations-of-trained-policies",
+    "href": "results.html#demonstrations-of-trained-policies",
+    "title": "Results",
+    "section": "Demonstrations of Trained Policies",
+    "text": "Demonstrations of Trained Policies\n\nPPO Policy Demo\n\n\n\nQRDQN Policy Demo"
+  },
+  {
+    "objectID": "results.html#findings",
+    "href": "results.html#findings",
+    "title": "Results",
+    "section": "Findings",
+    "text": "Findings\n\nReward alignment drives learned behavior: PPO follows the incentives embedded in the shaped reward. Because the reward penalizes waiting, abandonment, and leftover inventory, the agent converges to a conservative production policy. Under-production is not a failure mode; it is the logical outcome of optimizing a reward that treats waste as worse than missed sales.\nHeuristic baselines outperform deep RL under misaligned objectives: Newsvendor succeeds because it encodes domain knowledge that the RL agents are never given: in this system, throughput matters more than waste. Its structural prior—bake aggressively and accept inventory losses—matches the true profit objective, while PPO and QRDQN optimize a proxy objective with different priorities.\nPricing adjustments offer limited gains without objective alignment: Bandit-based pricing lifts profit only when updates use profit directly. Even then, pricing cannot fix PPO’s core behavioral bias toward minimal production. The bandit can shift margins but cannot change the underlying production strategy learned from the shaped reward.\nTraining stability is not the bottleneck: Learning curves are smooth across PPO, PPO+Price, and QRDQN. There is no evidence of instability, divergence, or collapse. The gap between heuristics and RL arises from what the agents are asked to optimize, not from failures in optimization.\n\nTaken together, these findings show that beating strong operational heuristics requires either a reward aligned with business KPIs, RL methods that encode queue and capacity structure explicitly, or hybrid approaches that integrate domain priors. Algorithmic sophistication alone cannot overcome a reward function that penalizes the very behaviors needed for profit."
+  },
+  {
+    "objectID": "methods.html",
+    "href": "methods.html",
+    "title": "Methods",
+    "section": "",
+    "text": "This section describes the learning algorithms, pricing bandit, heuristic baselines, and experimental protocols used to evaluate control policies in Bellman’s Bakery. Two reinforcement learning (RL) agents—Proximal Policy Optimization (PPO) and Quantile Regression DQN (QRDQN), are compared against bandit-augmented PPO and established heuristics. All approaches interact with the same simulator described in Environment."
+  },
+  {
+    "objectID": "methods.html#environment-summary-abridged",
+    "href": "methods.html#environment-summary-abridged",
+    "title": "Methods",
+    "section": "Environment summary (abridged)",
+    "text": "Environment summary (abridged)\nEach episode spans 240 ticks (10 seconds each) and includes two ovens (capacity 4 units each), a queue capped at 12 customers, and a limit of three customers served per tick. Arrivals follow a nonhomogeneous Poisson process with morning and midday peaks. Demand is nonstationary, exhibiting ±10% daily drift and ±10% weekly fluctuations.\nThe reward is a shaped, multi-objective signal:\n- revenue and a +0.1 serve bonus,\n- a wait penalty of 0.01 per tick per queued customer,\n- a 0.5 abandonment penalty,\n- a 0.1 balk penalty, and\n- a terminal leftover-cost penalty.\nDaily price multipliers scale revenue. Demand elasticity is minimal, so pricing primarily adjusts revenue rather than arrival intensity."
+  },
+  {
+    "objectID": "methods.html#learning-agents",
+    "href": "methods.html#learning-agents",
+    "title": "Methods",
+    "section": "Learning agents",
+    "text": "Learning agents\n\nProximal Policy Optimization (PPO)\nPPO is implemented with MaskablePPO (SB3-Contrib) to ensure feasibility in the 11-action discrete space. Invalid actions are masked by assigning logits of \\(-\\infty\\). In addition, when any serve action is available, all bake actions are masked to enforce service priority.\n\nArchitecture and training setup\n\nPolicy network: two-layer MLP (256–256), Tanh activations.\n\nValue network: shares backbone features with the policy.\n\nVectorized training: 8 parallel environments.\n\n\n\nHyperparameters\n\nn_steps = 2048\n\nbatch_size = 256\n\ngamma = 0.995\n\ngae_lambda = 0.95\n\nclip_range = 0.2\n\nent_coef = 0.01\n\nlearning_rate = 3e-4\n\nTraining horizon: \\(10^6\\) environment steps (preceded by a 300k warm-up run).\n\n\n\nEnvironment-specific guardrails\n\nBake actions masked when any serve action is feasible.\n\nOven-capacity masking for bake actions.\n\nPer-tick cap: serve_per_tick = 3.\n\nPPO maximizes the shaped reward; it is not directly trained to maximize economic profit.\n\n\n\nQuantile Regression DQN (QRDQN)\nQRDQN estimates full return distributions by learning quantile values. In SB3, QRDQN does not natively support action masking; when an invalid action is selected, the environment applies a small penalty and treats the step as idle. Exploration follows ε-greedy decay.\n\nArchitecture and training setup\n\nMLP architecture: 256–256, Tanh activation.\n\nNumber of quantiles: 51.\n\nReplay buffer: size \\(10^6\\), uniform sampling.\n\nExploration: ε-greedy (1.0 → 0.05 linear decay).\n\nTarget network: Polyak averaging with \\(\\tau = 0.005\\).\n\nOptimizer: Adam, learning rate \\(3\\times 10^{-4}\\).\n\n\n\nHyperparameters\n\nbatch_size = 256\n\ngamma = 0.995\n\nlearning_starts = 50_000\n\ntrain_freq = 4, gradient_steps = 1\n\ntarget_update_interval = 1\n\nTraining horizon: \\(10^6\\) steps (matched to PPO)."
+  },
+  {
+    "objectID": "methods.html#bandit-layer-daily-pricing",
+    "href": "methods.html#bandit-layer-daily-pricing",
+    "title": "Methods",
+    "section": "Bandit layer: daily pricing",
+    "text": "Bandit layer: daily pricing\nA Thompson-sampling bandit selects a single daily price multiplier, yielding a two-time-scale design: the bandit chooses the global price, and the RL controller operates within the day.\n\nPrice arms\n\nStandard grid: {0.9, 1.0, 1.1}\n\nProfit-oriented grid: {0.7, 0.85, 1.0, 1.15, 1.3}\n\n\n\nUpdate metrics\nTwo evaluation signals are considered:\n\nComposite metric (aligned with RL reward shaping):\n\\[\n\\text{metric}\n  = \\text{profit}\n- 0.02 \\cdot \\text{wait\\_ticks}\n- 5 \\cdot \\text{abandoned}\n- 2 \\cdot \\text{balked}.   \n  \\]\nNet-profit-only metric:\n\\[\n\\text{metric} = \\text{net profit}.\n\\]\n\nThe profit-only metric tests whether the bandit can push PPO toward more revenue-oriented behavior."
+  },
+  {
+    "objectID": "methods.html#heuristic-baselines",
+    "href": "methods.html#heuristic-baselines",
+    "title": "Methods",
+    "section": "Heuristic baselines",
+    "text": "Heuristic baselines\n\nBake-to-Par\nMaintains fixed per-item inventory targets. The agent bakes the largest deficit first and serves the earliest matching customer.\n\n\nGreedy Queue\nCounts pending requests in the queue and bakes the most requested item; defaults to long-run demand proportions when no item is dominant.\n\n\nNewsvendor (strongest baseline)\nComputes per-item production targets from expected total demand and bakes toward the largest remaining target gap. This heuristic performs strongly in settings where demand is predictable and waste costs are absorbed by high throughput."
+  },
+  {
+    "objectID": "methods.html#training-protocol",
+    "href": "methods.html#training-protocol",
+    "title": "Methods",
+    "section": "Training protocol",
+    "text": "Training protocol\nAll learning agents use identical simulator configurations. Training employs 8 vectorized environments and Adam optimization. Models are checkpointed periodically. Reported results include:\n\nthe final checkpoint, and\n\nthe best checkpoint, selected using evaluation net profit averaged over seeds.\n\nRandom seed handling follows SB3 conventions for PPO and QRDQN to ensure reproducibility."
+  },
+  {
+    "objectID": "methods.html#evaluation-protocol",
+    "href": "methods.html#evaluation-protocol",
+    "title": "Methods",
+    "section": "Evaluation protocol",
+    "text": "Evaluation protocol\nTwo evaluation regimes are used:\n\nFull horizon: 10 seeds × 20 days; results reported as seed-level means.\n\nWeekly stability: 20 seeds × 5 days; emphasizes variance across seeds.\n\nKey performance indicators (KPIs):\n\nnet profit,\n\nabandonment rate,\n\nmean wait (seconds),\n\nwaste rate,\n\nservice rate.\n\nRL-internal performance is monitored through TensorBoard rollout and evaluation reward curves."
+  },
+  {
+    "objectID": "methods.html#reward-specification-reference",
+    "href": "methods.html#reward-specification-reference",
+    "title": "Methods",
+    "section": "Reward specification (reference)",
+    "text": "Reward specification (reference)\n\n\n\nComponent\nMeaning\nWeight\nSign\n\n\n\n\nProfit\nrevenue − cost\n+1.0\npositive\n\n\nWait penalty\nper tick of waiting\n−0.01\nnegative\n\n\nAbandon penalty\nexpired patience\n−0.7\nnegative\n\n\nBalk penalty\nqueue full\n−0.1\nnegative\n\n\nLeftover cost\nunsold items\n−1.0\nnegative\n\n\nServe bonus\neach service\n+0.1\npositive\n\n\n\nFormal definition: \\[\nR_t\n= \\mathrm{profit}_t\n- \\lambda_w\\,\\mathrm{wait\\_ticks}_t\n- \\lambda_a\\,\\mathrm{abandon}_t\n- \\lambda_b\\,\\mathrm{balk}_t\n- \\lambda_L\\,\\mathrm{leftover}_t\n+ \\lambda_s\\,\\mathrm{served}_t,\n\\]\nwith\n\\(\\lambda_w = 0.01\\),\n\\(\\lambda_a = 0.7\\), want e \\(\\lambda_b = 0.1\\),\n\\(\\lambda_L = 1.0\\),\n\\(\\lambda_s = 0.1\\).\n\nExpected behavioral differences\n\nPPO tends to adopt conservative, waste-minimizing strategies because penalties accumulate over time.\n\nQRDQN, with replay and distributional targets, may explore more aggressive bake/serve trade-offs even under the same reward."
+  },
+  {
+    "objectID": "methods.html#implementation-details-and-reproducibility",
+    "href": "methods.html#implementation-details-and-reproducibility",
+    "title": "Methods",
+    "section": "Implementation details and reproducibility",
+    "text": "Implementation details and reproducibility\n\nFrameworks: Stable-Baselines3 2.3.0 and SB3-Contrib 2.3.0.\n\nCore stack pinned: NumPy 1.26.4, Pandas 2.1.4, PyArrow 14.0.2.\n\nTraining and evaluation scripts, seed configurations, and plotting utilities are included in project repositories.\n\nTensorBoard logs are exported for inclusion in the Results section."
+  },
+  {
+    "objectID": "index.html",
+    "href": "index.html",
+    "title": "Reward Misalignment in Deep Reinforcement Learning: Evidence from a Bakery Production Environment",
+    "section": "",
+    "text": "Table of Contents:\n\nIntroduction\nEnvironment\nMethods\nResults\nAnalysis & Discussion\nConclusion & Future Work\nReferences"
+  },
+  {
+    "objectID": "index.html#abstract",
+    "href": "index.html#abstract",
+    "title": "Reward Misalignment in Deep Reinforcement Learning: Evidence from a Bakery Production Environment",
+    "section": "",
+    "text": "Table of Contents:\n\nIntroduction\nEnvironment\nMethods\nResults\nAnalysis & Discussion\nConclusion & Future Work\nReferences"
+  },
+  {
+    "objectID": "conclusion.html",
+    "href": "conclusion.html",
+    "title": "Conclusion and Future Work",
+    "section": "",
+    "text": "The results highlight a central theme running through reinforcement learning for operations problems: an agent’s behavior reflects the reward it is given, not the metric by which humans ultimately judge success. In the Tiny Bakery environment, the Newsvendor heuristic achieves the highest profit precisely because it embraces a strategy that the RL reward discourages—producing aggressively, holding inventory buffers, and accepting waste as a necessary cost of maintaining service levels.\nPPO, by contrast, optimizes a composite reward that places substantial weight on wait times, abandonment, and leftover inventory. Within that objective, the agent behaves exactly as expected: it adopts a conservative baking policy that minimizes exposure to negative reward terms but sacrifices throughput, service quality, and ultimately profit. The pricing bandit reinforces this pattern when trained on the same composite reward, and even the profit-only version can only shift behavior modestly because pricing cannot relieve the underlying capacity bottlenecks in ovens and queue dynamics. These findings echo trends reported in recent work on RL for perishable goods, service systems, and dynamic pricing, where agents often appear “suboptimal” on business metrics while being entirely optimal under the shaped reward.\nRather than identifying algorithmic failure, the experiments surface the deeper issue of objective misalignment—a challenge that is widely recognized in the RL-for-operations literature and remains an active research area.\n\n\nSeveral extensions would help address this alignment gap and explore richer learning dynamics in the environment.\n1. Reward redesign and constrained objectives.\nA profit-aligned reward or a constrained RL formulation—e.g., profit maximization subject to service-level penalties—could shift the agent toward more economically meaningful policies. Lagrangian relaxation, CVaR-based objectives, or multi-objective reward shaping may offer more principled ways to encode trade-offs between waste, service quality, and inventory risk.\n2. Curriculum training and environmental structure.\nA staged curriculum beginning with stationary demand and gradually introducing non-stationarity may guide the policy out of the conservative local optimum. This mirrors approaches used successfully in perishable-goods RL and may reduce the tendency to collapse into underproduction.\n3. Capacity-aware strategies.\nIntroducing mechanisms such as short-horizon lookahead, bake-batch optimization, or alternative oven configurations may give the agent tools to escape starvation equilibria. Allowing limited same-day restocking or flexible par adjustments could further expand the feasible policy space.\n4. Improved baselines and hybrid methods.\nMore expressive par-selection heuristics, contextual bandits for dynamic pricing, or hybrid RL–heuristic controllers could bridge the gap between flexible learning and domain expertise. Because Newsvendor performs well by exploiting strong structural priors, combining such priors with RL may yield more robust strategies.\n5. Alternative RL algorithms (QRDQN, SAC variants).\nValue-based or distributional methods may behave differently under the same reward structure, particularly when long-tail return distributions matter. Once QRDQN experiments complete, comparing its learned policies with PPO will help determine whether the conservative bias is algorithm-specific or fundamentally tied to the reward.\nTaken together, these findings suggest that the primary challenge in this domain is not improving PPO or adding more architectural sophistication, but determining how to encode the bakery’s operational objectives into a reward formulation the agent can meaningfully optimize. The experiments here provide a detailed diagnosis of the misalignment and lay the groundwork for the next generation of RL agents that better reflect real-world business priorities."
+  },
+  {
+    "objectID": "conclusion.html#future-directions",
+    "href": "conclusion.html#future-directions",
+    "title": "Conclusion and Future Work",
+    "section": "",
+    "text": "Several extensions would help address this alignment gap and explore richer learning dynamics in the environment.\n1. Reward redesign and constrained objectives.\nA profit-aligned reward or a constrained RL formulation—e.g., profit maximization subject to service-level penalties—could shift the agent toward more economically meaningful policies. Lagrangian relaxation, CVaR-based objectives, or multi-objective reward shaping may offer more principled ways to encode trade-offs between waste, service quality, and inventory risk.\n2. Curriculum training and environmental structure.\nA staged curriculum beginning with stationary demand and gradually introducing non-stationarity may guide the policy out of the conservative local optimum. This mirrors approaches used successfully in perishable-goods RL and may reduce the tendency to collapse into underproduction.\n3. Capacity-aware strategies.\nIntroducing mechanisms such as short-horizon lookahead, bake-batch optimization, or alternative oven configurations may give the agent tools to escape starvation equilibria. Allowing limited same-day restocking or flexible par adjustments could further expand the feasible policy space.\n4. Improved baselines and hybrid methods.\nMore expressive par-selection heuristics, contextual bandits for dynamic pricing, or hybrid RL–heuristic controllers could bridge the gap between flexible learning and domain expertise. Because Newsvendor performs well by exploiting strong structural priors, combining such priors with RL may yield more robust strategies.\n5. Alternative RL algorithms (QRDQN, SAC variants).\nValue-based or distributional methods may behave differently under the same reward structure, particularly when long-tail return distributions matter. Once QRDQN experiments complete, comparing its learned policies with PPO will help determine whether the conservative bias is algorithm-specific or fundamentally tied to the reward.\nTaken together, these findings suggest that the primary challenge in this domain is not improving PPO or adding more architectural sophistication, but determining how to encode the bakery’s operational objectives into a reward formulation the agent can meaningfully optimize. The experiments here provide a detailed diagnosis of the misalignment and lay the groundwork for the next generation of RL agents that better reflect real-world business priorities."
+  },
+  {
+    "objectID": "analysis.html",
+    "href": "analysis.html",
+    "title": "Analysis and Discussion",
+    "section": "",
+    "text": "The empirical results reveal a consistent pattern: the reinforcement learning agents behave in ways that are entirely rational under the reward they are given, but not aligned with the business metric used for evaluation. The following sections examine why PPO converged to a conservative, low-baking policy; why pricing adjustments had limited effect; and how these findings connect to observations in recent literature.\n\n\nAcross all PPO variants, the agent reliably converges to a policy that minimizes waste, abandonment penalties, and wait-time penalties by sharply limiting production. This behavior is not a failure to learn. Instead, it reflects the structure of the reward function, where leftover items incur a strong penalty and every additional baked item implicitly carries potential downside risk.\nWhen waste is heavily penalized and the environment imposes strict capacity constraints, PPO discovers that aggressive baking—while profitable—creates exposure to negative reward terms. By contrast, an under-production regime keeps waste near zero, caps penalty accumulation, and stabilizes reward variance across stochastic demand realizations.\nThe resulting policy produces low waste but chronically insufficient inventory, leading to long wait times and high abandonment. PPO effectively learns a risk-averse approximation of the reward, not the profit-maximizing policy preferred by the business.\nEarlier versions of the environment briefly included a small idle penalty, which unintentionally encouraged the agent to avoid baking or serving when uncertain. Removing this idle penalty and strengthening serve-first action masking eliminated degenerate idling behavior but did not meaningfully improve profit. This further confirms that the core issue is not exploration or update stability but the structure of the reward itself.\n\n\n\nThe bakery’s true objective is to maximize net profit while maintaining reasonable service quality. The RL reward, however, is a composite of profit and multiple penalties:\n\nper-tick wait cost\n\nabandonment penalty\n\nbalking penalty\n\nleftover inventory cost\n\na modest serve bonus\n\nThis shaped reward was meant to stabilize learning and encode operational preferences, but it inadvertently emphasized waste and abandonment avoidance to a degree that suppresses profitable behavior.\nUnder tight oven capacity and non-stationary demand, profitable behavior requires baking ahead of demand and carrying inventory risk. The reward penalizes exactly this behavior. Consequently, PPO selects policies that appear suboptimal in business terms but are optimal under the reward function. This phenomenon directly mirrors patterns documented in recent queueing and operations-focused RL studies, where agents adopt conservative service or stocking policies when delay or leftover penalties are overweighted.\n\n\n\nBoth pricing-bandit variants highlight an important point: pricing only improves performance when price changes influence demand in a meaningful way. In the Tiny Bakery environment, the binding constraint is service rate, not demand volume. Even with modest price elasticity, throughput remains capped by ovens, bake times, and queuing dynamics.\nWhen the bandit is trained using the composite penalty metric, it simply reinforces PPO’s already conservative tendencies. Prices drift in directions that do not resolve bottlenecks in service capacity. Switching the bandit to a profit-only metric produces the expected economic response: profit rises (slightly) and waste increases. But the overall impact remains small because pricing does not change the fundamental bottleneck.\nThis behavior is consistent with dynamic pricing literature in perishable-goods environments: price matters only when service capacity is elastic or when pricing can meaningfully shape the order mix. In this setting, neither condition holds.\n\n\n\nThe PPO+Par hybrid underperforms sharply. Par levels were designed as a simple, interpretable heuristic, but in this environment they act as a rigid constraint that fails to adapt to demand drift or stochastic fluctuations. The par system forces sustained underproduction, pushing the agent into a starvation regime where neither PPO nor the heuristic can recover. Additional tuning could improve this baseline, but the underlying rigidity limits its ability to respond to non-stationary dynamics.\n\n\n\nA section will be added here once QRDQN training concludes. The analysis will compare value-based and policy-gradient behavior in this environment and assess whether distributional value estimation mitigates conservative tendencies seen in PPO.\n\n\n\nThe dynamics observed here echo themes across recent RL-for-operations research.\nNomura et al. (2025) show that PPO can approximate dynamic programming solutions in perishable-goods systems only when the reward is carefully calibrated to the true objective. When penalties are misbalanced, PPO converges to policies that look suboptimal in domain metrics but optimal in reward space. Their work further demonstrates that pricing affects outcomes only when demand elasticity is strong; in capacity-limited systems, pricing cannot fix operational bottlenecks. This aligns with our finding that price multipliers had limited leverage.\nvan Hezewijk (2024) analyzes RL behavior in service and queueing systems and finds that agents routinely overweight delayed penalties—exactly the pattern observed in our conservative PPO policies. When leftover costs dominate the reward landscape, agents adopt extreme waste-avoidant behavior even at the expense of throughput and profit. The resemblance to our under-production pattern is direct.\nFinally, dynamic-pricing studies such as Genalti (2021) emphasize that bandit-based pricing performs well only when price affects the primary bottleneck. When congestion, service rate, or operational capacity constrain the system, pricing cannot meaningfully improve overall performance. This is precisely why our profit-based bandit moved in the right direction but could not close the gap with Newsvendor.\n\n\n\nViewed collectively, these results reflect a coherent story rather than a training failure. PPO learns the reward faithfully but the reward itself does not encode the bakery’s operational priorities in a profit-maximizing way. Pricing cannot overcome capacity constraints, and simple heuristics like Newsvendor outperform RL because they encode the correct structural prior: in a bakery facing non-stationary demand, a buffer of excess production is not wasteful—it is necessary.\nThe lesson is not that deep RL “doesn’t work,” but that reward design is the true optimization problem. Future work should consider constrained RL, risk-sensitive objectives, or direct profit-driven formulations to realign agent incentives with business goals."
+  },
+  {
+    "objectID": "analysis.html#behavior-of-ppo-in-a-capacity-constrained-bakery",
+    "href": "analysis.html#behavior-of-ppo-in-a-capacity-constrained-bakery",
+    "title": "Analysis and Discussion",
+    "section": "",
+    "text": "Across all PPO variants, the agent reliably converges to a policy that minimizes waste, abandonment penalties, and wait-time penalties by sharply limiting production. This behavior is not a failure to learn. Instead, it reflects the structure of the reward function, where leftover items incur a strong penalty and every additional baked item implicitly carries potential downside risk.\nWhen waste is heavily penalized and the environment imposes strict capacity constraints, PPO discovers that aggressive baking—while profitable—creates exposure to negative reward terms. By contrast, an under-production regime keeps waste near zero, caps penalty accumulation, and stabilizes reward variance across stochastic demand realizations.\nThe resulting policy produces low waste but chronically insufficient inventory, leading to long wait times and high abandonment. PPO effectively learns a risk-averse approximation of the reward, not the profit-maximizing policy preferred by the business.\nEarlier versions of the environment briefly included a small idle penalty, which unintentionally encouraged the agent to avoid baking or serving when uncertain. Removing this idle penalty and strengthening serve-first action masking eliminated degenerate idling behavior but did not meaningfully improve profit. This further confirms that the core issue is not exploration or update stability but the structure of the reward itself."
+  },
+  {
+    "objectID": "analysis.html#misalignment-between-reward-and-business-metrics",
+    "href": "analysis.html#misalignment-between-reward-and-business-metrics",
+    "title": "Analysis and Discussion",
+    "section": "",
+    "text": "The bakery’s true objective is to maximize net profit while maintaining reasonable service quality. The RL reward, however, is a composite of profit and multiple penalties:\n\nper-tick wait cost\n\nabandonment penalty\n\nbalking penalty\n\nleftover inventory cost\n\na modest serve bonus\n\nThis shaped reward was meant to stabilize learning and encode operational preferences, but it inadvertently emphasized waste and abandonment avoidance to a degree that suppresses profitable behavior.\nUnder tight oven capacity and non-stationary demand, profitable behavior requires baking ahead of demand and carrying inventory risk. The reward penalizes exactly this behavior. Consequently, PPO selects policies that appear suboptimal in business terms but are optimal under the reward function. This phenomenon directly mirrors patterns documented in recent queueing and operations-focused RL studies, where agents adopt conservative service or stocking policies when delay or leftover penalties are overweighted."
+  },
+  {
+    "objectID": "analysis.html#limited-effectiveness-of-pricing-adaptation",
+    "href": "analysis.html#limited-effectiveness-of-pricing-adaptation",
+    "title": "Analysis and Discussion",
+    "section": "",
+    "text": "Both pricing-bandit variants highlight an important point: pricing only improves performance when price changes influence demand in a meaningful way. In the Tiny Bakery environment, the binding constraint is service rate, not demand volume. Even with modest price elasticity, throughput remains capped by ovens, bake times, and queuing dynamics.\nWhen the bandit is trained using the composite penalty metric, it simply reinforces PPO’s already conservative tendencies. Prices drift in directions that do not resolve bottlenecks in service capacity. Switching the bandit to a profit-only metric produces the expected economic response: profit rises (slightly) and waste increases. But the overall impact remains small because pricing does not change the fundamental bottleneck.\nThis behavior is consistent with dynamic pricing literature in perishable-goods environments: price matters only when service capacity is elastic or when pricing can meaningfully shape the order mix. In this setting, neither condition holds."
+  },
+  {
+    "objectID": "analysis.html#ablation-par-level-hybrid-behavior",
+    "href": "analysis.html#ablation-par-level-hybrid-behavior",
+    "title": "Analysis and Discussion",
+    "section": "",
+    "text": "The PPO+Par hybrid underperforms sharply. Par levels were designed as a simple, interpretable heuristic, but in this environment they act as a rigid constraint that fails to adapt to demand drift or stochastic fluctuations. The par system forces sustained underproduction, pushing the agent into a starvation regime where neither PPO nor the heuristic can recover. Additional tuning could improve this baseline, but the underlying rigidity limits its ability to respond to non-stationary dynamics."
+  },
+  {
+    "objectID": "analysis.html#placeholder-qrdqn-analysis-to-be-completed",
+    "href": "analysis.html#placeholder-qrdqn-analysis-to-be-completed",
+    "title": "Analysis and Discussion",
+    "section": "",
+    "text": "A section will be added here once QRDQN training concludes. The analysis will compare value-based and policy-gradient behavior in this environment and assess whether distributional value estimation mitigates conservative tendencies seen in PPO."
+  },
+  {
+    "objectID": "analysis.html#connection-to-related-literature",
+    "href": "analysis.html#connection-to-related-literature",
+    "title": "Analysis and Discussion",
+    "section": "",
+    "text": "The dynamics observed here echo themes across recent RL-for-operations research.\nNomura et al. (2025) show that PPO can approximate dynamic programming solutions in perishable-goods systems only when the reward is carefully calibrated to the true objective. When penalties are misbalanced, PPO converges to policies that look suboptimal in domain metrics but optimal in reward space. Their work further demonstrates that pricing affects outcomes only when demand elasticity is strong; in capacity-limited systems, pricing cannot fix operational bottlenecks. This aligns with our finding that price multipliers had limited leverage.\nvan Hezewijk (2024) analyzes RL behavior in service and queueing systems and finds that agents routinely overweight delayed penalties—exactly the pattern observed in our conservative PPO policies. When leftover costs dominate the reward landscape, agents adopt extreme waste-avoidant behavior even at the expense of throughput and profit. The resemblance to our under-production pattern is direct.\nFinally, dynamic-pricing studies such as Genalti (2021) emphasize that bandit-based pricing performs well only when price affects the primary bottleneck. When congestion, service rate, or operational capacity constrain the system, pricing cannot meaningfully improve overall performance. This is precisely why our profit-based bandit moved in the right direction but could not close the gap with Newsvendor."
+  },
+  {
+    "objectID": "analysis.html#overall-interpretation",
+    "href": "analysis.html#overall-interpretation",
+    "title": "Analysis and Discussion",
+    "section": "",
+    "text": "Viewed collectively, these results reflect a coherent story rather than a training failure. PPO learns the reward faithfully but the reward itself does not encode the bakery’s operational priorities in a profit-maximizing way. Pricing cannot overcome capacity constraints, and simple heuristics like Newsvendor outperform RL because they encode the correct structural prior: in a bakery facing non-stationary demand, a buffer of excess production is not wasteful—it is necessary.\nThe lesson is not that deep RL “doesn’t work,” but that reward design is the true optimization problem. Future work should consider constrained RL, risk-sensitive objectives, or direct profit-driven formulations to realign agent incentives with business goals."
+  },
+  {
+    "objectID": "appendix.html",
+    "href": "appendix.html",
+    "title": "Appendix",
+    "section": "",
+    "text": "PPO: n_steps=2048, batch_size=256, gamma=0.995, gae_lambda=0.95, ent_coef=0.01.\nBandit arms: {0.9,1.0,1.1} (penalty metric), {0.7,0.85,1.0,1.15,1.3} (profit metric)."
+  },
+  {
+    "objectID": "appendix.html#a.-hyperparameters",
+    "href": "appendix.html#a.-hyperparameters",
+    "title": "Appendix",
+    "section": "",
+    "text": "PPO: n_steps=2048, batch_size=256, gamma=0.995, gae_lambda=0.95, ent_coef=0.01.\nBandit arms: {0.9,1.0,1.1} (penalty metric), {0.7,0.85,1.0,1.15,1.3} (profit metric)."
+  },
+  {
+    "objectID": "appendix.html#b.-environment-configurations",
+    "href": "appendix.html#b.-environment-configurations",
+    "title": "Appendix",
+    "section": "B. Environment Configurations",
+    "text": "B. Environment Configurations\n\nserve_per_tick=3; 2 ovens, capacity 4u each; patience 30–90s; queue cap 12; non‑stationarity on.\nPrices, costs, yields, sizes as specified in code constants."
+  },
+  {
+    "objectID": "appendix.html#c.-additional-figures",
+    "href": "appendix.html#c.-additional-figures",
+    "title": "Appendix",
+    "section": "C. Additional Figures",
+    "text": "C. Additional Figures\n\nSee reports/figs/* for exported TensorBoard curves per run."
+  },
+  {
+    "objectID": "environment.html",
+    "href": "environment.html",
+    "title": "Environment",
+    "section": "",
+    "text": "The Bellman’s Bakery environment models a capacity-constrained, perishable-goods service system with stochastic arrivals, queue dynamics, limited oven capacity, and nonstationary demand shifts. Each episode simulates a single operating day of 240 decision ticks (10 seconds each). At each tick the agent selects a discrete action—serving, baking, or idling—subject to inventory, queue state, and oven capacity.\nThe environment exposes operational trade-offs among production timing, waste, congestion, abandonment, and responsiveness to shifting demand."
+  },
+  {
+    "objectID": "environment.html#viewer-snapshot",
+    "href": "environment.html#viewer-snapshot",
+    "title": "Environment",
+    "section": "Viewer Snapshot",
+    "text": "Viewer Snapshot"
+  },
+  {
+    "objectID": "environment.html#state-actions-and-dynamics",
+    "href": "environment.html#state-actions-and-dynamics",
+    "title": "Environment",
+    "section": "State, Actions, and Dynamics",
+    "text": "State, Actions, and Dynamics\n\nState Representation\nLet \\(s_t\\) denote the state at tick \\(t\\).\nThe observation vector includes:\n\nInventory counts for all 5 items\n\nOven states: remaining-time fractions for 2 ovens\n\nQueue features:\n\nqueue length (cap 12)\n\ntop \\(K = 5\\) customers, each with\n\ndesired-item one-hot (5)\n\nremaining-patience fraction\n\n\n\nTime-of-day: sine and cosine encodings\n\nDaily price multiplier\n\nNonstationary context: ±10% daily drift, ±10% weekly item swings\n\n\n\nAction Space\nThere are 11 discrete actions, with masking of infeasible choices:\n1–5. Serve item \\(i\\)\n6–10. Bake item \\(i\\)\n11. Idle\nUp to 3 customers may be served per tick (serve_per_tick = 3).\nMasking applies \\(-\\infty\\) to logits of invalid actions.\nWhen any serve action is valid, bake actions are masked out to prioritize service.\n\n\nTransition Dynamics\n\nHorizon: 240 ticks\n\nArrivals: Poisson with morning and lunch peaks\n\nQueue cap: 12; overflow customers balk\n\nPatience: 30–90 s; expired customers abandon\n\nProduction: item-specific sizes, bake times, and yields\n\nEnd-of-day waste: leftover items incur cost\n\nRestocks: disabled\n\nNonstationarity: ±10% daily drift, ±10% weekly item shifts"
+  },
+  {
+    "objectID": "environment.html#menu-capacities-and-parameters",
+    "href": "environment.html#menu-capacities-and-parameters",
+    "title": "Environment",
+    "section": "Menu, Capacities, and Parameters",
+    "text": "Menu, Capacities, and Parameters\n\nMenu Items\n\n\n\n\n\n\n\n\n\n\n\nItem\nSize (u)\nBake Time (s)\nBatch Yield\nBase Price\nCost (40%)\n\n\n\n\nMini Red Velvet Cake\n3\n90\n2\n$6.00\n$2.40\n\n\nRaspberry Matcha Roll\n1.5\n60\n4\n$4.50\n$1.80\n\n\nStrawberry Cream Slice\n1\n36\n4\n$3.50\n$1.40\n\n\nChocolate & Almond Drip Cake\n4\n120\n1\n$8.00\n$3.20\n\n\nChocolate Orange Roll\n1.5\n60\n4\n$4.50\n$1.80\n\n\n\n\n\nOvens & Initial Conditions\n\nOvens: 2\n\nCapacity: 4 units each\n\nStarting inventory: Strawberry=6, Matcha=4, Orange=4, Red Velvet=2, Drip Cake=1\n\n\n\nDemand & Pricing\n\nDemand mix: 30% Strawberry, 20% Matcha, 20% Orange, 15% Red Velvet, 15% Drip Cake\n\nAverage customers/day: ~60 (with morning and lunch peaks)\n\nDaily price multipliers: {0.9, 1.0, 1.1}\n\nPrice elasticity: none in this version — multipliers scale revenue only (demand unchanged)"
+  },
+  {
+    "objectID": "environment.html#reward-function",
+    "href": "environment.html#reward-function",
+    "title": "Environment",
+    "section": "Reward Function",
+    "text": "Reward Function\nThe per-tick reward \\(r_t\\) is:\n\\[\nr_t = (\\text{price}_i - \\text{cost}_i)\\mathbf{1}\\{\\text{serve } i\\}\n+ 0.1 \\mathbf{1}\\{\\text{serve } i\\}\n- 0.01 \\cdot \\text{queue\\_length}_t\n- 0.7 \\mathbf{1}\\{\\text{abandon}\\}\n- 0.1 \\mathbf{1}\\{\\text{balk}\\}.\n\\]\nAt episode end:\n\\[\nr_{\\text{end}} = -\\sum_i \\text{cost}_i \\cdot \\text{leftover}_i.\n\\]\nNo idle penalty is used.\n\nInterpretation\n\nRevenue and service events contribute positively.\n\nQueueing, abandonment, and balking incur penalties.\n\nEnd-of-day leftovers add cost.\n\nIllegal actions are softly penalized and treated as idle.\n\nBecause leftover cost equals full ingredient cost, the reward overweights waste avoidance, biasing the agent toward conservative baking."
+  },
+  {
+    "objectID": "environment.html#business-objective-vs-rl-objective",
+    "href": "environment.html#business-objective-vs-rl-objective",
+    "title": "Environment",
+    "section": "Business Objective vs RL Objective",
+    "text": "Business Objective vs RL Objective\n\nBusiness KPI: maximize net profit with acceptable wait and abandonment levels.\n\nRL objective: maximize the shaped reward above.\n\nThe shaped reward trades off multiple goals and is not identical to maximizing net profit. This misalignment explains PPO’s conservative behavior despite appearing “irrational” from a profit perspective."
+  },
+  {
+    "objectID": "environment.html#observationaction-interface",
+    "href": "environment.html#observationaction-interface",
+    "title": "Environment",
+    "section": "Observation–Action Interface",
+    "text": "Observation–Action Interface\nThe environment supplies:\n\nstructured vector observations\n\nan 11-action discrete space with masking\n\nfull MDP transitions\n\nSuitable for PPO, QRDQN, and entropy-regularized methods."
+  },
+  {
+    "objectID": "environment.html#training-configuration",
+    "href": "environment.html#training-configuration",
+    "title": "Environment",
+    "section": "Training Configuration",
+    "text": "Training Configuration\n\nAlgorithm: PPO (Stable-Baselines3) with masking\n\nParallel envs: 8\n\nTraining budget: \\(3\\times10^5\\) → \\(10^6\\) steps\n\nEvaluation metrics: net profit, wait time, abandonment, waste rate, service level\n\nPPO provides stable learning in long-horizon, stochastic, discrete-action settings but cannot compensate for reward–metric misalignment."
+  },
+  {
+    "objectID": "introduction.html",
+    "href": "introduction.html",
+    "title": "Introduction",
+    "section": "",
+    "text": "Operational choices in retail or service settings typically involve balancing multiple competing goals, such as increasing revenue, reducing customer wait times, preventing stockouts, and minimizing spoilage. Bakeries, for example, face short-term challenges with shelf-life items, limited space, and unpredictable demand that varies by hour. The well-known newsvendor model provides clear guidance for single-period ordering decisions, offering analytically optimal stocking levels under uncertain demand (Khouja 1999) (Arrow, Harris, and Marschak 1951). However, these formulations focus primarily on a single objective and do not account for real-time dynamics such as delays, customer abandonment, congestion, or operational bottlenecks.\nDeep reinforcement learning (DRL) has emerged as a useful method for developing control strategies through direct experience in complex settings. While these approaches can capture responses to shifting demand patterns, delays, or system limits, even without predefined models, they do not inherently aim to achieve goals like revenue or performance. DRL agents are only as good as the reward function they are trained on. They do not “optimize for profit” or “maximize customer satisfaction” unless those goals are explicitly and precisely defined. If the reward signal captures only part of what matters to a business, the resulting behavior can end up looking nothing like what a human decision-maker would actually want."
+  },
+  {
+    "objectID": "introduction.html#motivation",
+    "href": "introduction.html#motivation",
+    "title": "Introduction",
+    "section": "",
+    "text": "Operational choices in retail or service settings typically involve balancing multiple competing goals, such as increasing revenue, reducing customer wait times, preventing stockouts, and minimizing spoilage. Bakeries, for example, face short-term challenges with shelf-life items, limited space, and unpredictable demand that varies by hour. The well-known newsvendor model provides clear guidance for single-period ordering decisions, offering analytically optimal stocking levels under uncertain demand (Khouja 1999) (Arrow, Harris, and Marschak 1951). However, these formulations focus primarily on a single objective and do not account for real-time dynamics such as delays, customer abandonment, congestion, or operational bottlenecks.\nDeep reinforcement learning (DRL) has emerged as a useful method for developing control strategies through direct experience in complex settings. While these approaches can capture responses to shifting demand patterns, delays, or system limits, even without predefined models, they do not inherently aim to achieve goals like revenue or performance. DRL agents are only as good as the reward function they are trained on. They do not “optimize for profit” or “maximize customer satisfaction” unless those goals are explicitly and precisely defined. If the reward signal captures only part of what matters to a business, the resulting behavior can end up looking nothing like what a human decision-maker would actually want."
+  },
+  {
+    "objectID": "introduction.html#problem-formulation",
+    "href": "introduction.html#problem-formulation",
+    "title": "Introduction",
+    "section": "Problem Formulation",
+    "text": "Problem Formulation\nBellman’s Bakery is a custom OpenAI Gymnasium environment designed for this study to simulate a small bakery with capacity constraints, where each episode corresponds to one single day of operation. Customers arrive with stochastic demand and limited patience; they may leave at the sight of a long queue or if their wait times exceed a certain threshold. The agent(baker) decides which items to produce, when to serve customers, and when to idle, all while operating under constraints such as oven capacity and fixed bake times. At the end of each day, unsold inventory is discarded. The environment records business KPIs such as net profit, average wait, abandonment, and waste, and uses an action mask to enforce valid decisions. Its reward is a combined (weighted) signal: revenue and successful service add points, while waiting, abandonment, balking, and leftover inventory subtract points. This reward is intentionally not equivalent to net profit. The central question is how different solution approaches, newsvendor-styleheuristics, Proximal Policy Optimization (PPO), PPO+bandits, and Quantile Regression Deep Q‑Network (QRDQN), optimize this shaped reward and how the resulting policies perform when judged against business-facing metrics such as profitability, service quality, and inventory efficiency.\nTo investigate this, four types of policies are benchmarked:\n\nA newsvendor-style heuristic that selects bake quantities using a static demand model and a target service level (quantile rule).\nA PPO agent trained directly on the shaped reward in the Bellman’s Bakery environment.\nA hybrid PPO+bandit variant that augments PPO with a pricing or par-level bandit component.\nA QRDQN agent, representing an off-policy, value-based DRL method adapted to the same discrete action space.\n\nThis setup leads to the following research questions:\n\nHow does reward shaping in a multi-objective production system influence the qualitative behavior of deep RL agents?\nUnder what conditions does a DRL policy outperform, match, or underperform a simple newsvendor heuristic when evaluated on profit, waiting time, abandonment, and waste?\nDo off-policy distributional methods such as QRDQN exhibit different trade-offs than on-policy methods like PPO under the same reward and environment?"
+  },
+  {
+    "objectID": "introduction.html#related-work",
+    "href": "introduction.html#related-work",
+    "title": "Introduction",
+    "section": "Related Work",
+    "text": "Related Work\nDespite substantial work at the intersection of perishable inventory, dynamic pricing, and reinforcement learning, most studies analyze settings that differ from the operational context examined in this paper. Research on perishable inventory typically focuses on optimal ordering and pricing strategies under stochastic demand, often assuming well-structured demand models and low-dimensional state spaces.For instance, Nomura and colleagues examined a perishable inventory issue involving dynamic pricing and demand that varies by age comparing traditional dynamic programming approaches to PPO methods (Nomura, Liu, and Nishi 2025). In the end, they found that DRL could get close to the best possible results while simulataneously cutting down on the time needed for computations. Two conclusions are especially relevant here: (i) PPO performs well when the reward is tightly aligned with the economic objective, and (ii) reward design strongly shapes learned behavior.\nOther lines of research examine RL in queueing and scheduling environments. Van Hezewijk shows that RL agents often prioritize surrogate reward terms, such as penalties for waiting or abandonment, over business-facing performance metrics when these are not tightly aligned (Hezewijk} 2024). This raises concerns about whether RL agents may develop overly conservative or low-throughput policies in systems with capacity constraints. In parallel, dynamic pricing research has often employed bandit-based approaches rather than full RL. Genalti demonstrates that Thompson sampling can effectively learn profit-maximizing pricing strategies under uncertainty, especially when demand elasticity is monotonic and data are limited (Genalti 2021). The pricing bandit used in this study reflects that lineage, though prior work suggests its effectiveness depends on whether pricing can meaningfully shift demand.\nTaken together, these works indicate that RL methods are highly sensitive to reward specification and state–action structure, and that bandit-based pricing only adds value when price elasticity meaningfully shifts demand. Accordingly, this paper investigates three core questions in the context of a simulated, capacity-constrained bakery: (1) how PPO responds to a shaped reward that only partially reflects profit; (2) whether surrogate penalties for waiting and abandonment bias policies toward conservative, low-waste behavior; and (3) whether pricing flexibility improves performance when demand is uncertain but throughput is constrained by service capacity rather than elasticity."
+  },
+  {
+    "objectID": "introduction.html#contributions-of-this-project",
+    "href": "introduction.html#contributions-of-this-project",
+    "title": "Introduction",
+    "section": "Contributions of this project",
+    "text": "Contributions of this project\nThis project brings forward three key contributions. One involves a detailed queue-based simulation for a small bakery operation capturing those real tensions in daily work, like balancing profit against service quality and cutting down on waste. Another contribution comes from a structured comparison of various policy approaches through experiments that cover basic heuristics, on-policy reinforcement learning with PPO, hybrid bandit, RL methods, and an off-policy distributional technique called QRDQN. All of them faced evaluation under identical reward shaping. The third point reveals what happens when training rewards drift away from the actual evaluation measures. PPO starts to chase the wrong targets too hard. It pushes to minimize waste, even if that means sacrificing profit and service levels. Meanwhile, QRDQN along with heuristic policies land at varied spots on the same trade-off line. Overall, these outcomes point out something crucial: reward design and matching objectives really matter in deep reinforcement learning for production and inventory setups."
+  },
+  {
+    "objectID": "references.html",
+    "href": "references.html",
+    "title": "References",
+    "section": "",
+    "text": "References\n\nArrow, Kenneth J, Theodore Harris, and Jacob Marschak. 1951. “Optimal Inventory Policy.” Econometrica 19 (3): 250–72. https://www.or.mist.i.u-tokyo.ac.jp/takeda/FreshmanCourse/ArrowHarrisMarschak.pdf.\n\n\nGenalti, Gianmarco. 2021. “A Multi-Armed Bandit Approach to Dynamic Pricing.” Master's thesis, Laurea Magistrale in Mathematical Engineering - Ingegneria Matematica. https://www.politesi.polimi.it/bitstream/10589/183733/4/genalti_executive_summary.pdf.\n\n\nHezewijk}, Lotte {van. 2024. “Deep Reinforcement Learning for Production and Inventory Management: Bridging the Gap Between Theory and Practice.” Beta PhD Dissertation Series. Phd Thesis 1 (Research TU/e / Graduation TU/e), Industrial Engineering; Innovation Sciences; Eindhoven University of Technology.\n\n\nKhouja, Mohamed. 1999. “The Single-Period (Newsvendor) Problem: Literature Review and Suggestions for Future Research.” Omega 27 (5): 537–53. https://www-sciencedirect-com.proxy.library.georgetown.edu/science/article/pii/S0305048399000171.\n\n\nNomura, Yusuke, Ziang Liu, and Tatsushi Nishi. 2025. “Deep Reinforcement Learning for Dynamic Pricing and Ordering Policies in Perishable Inventory Management.” Applied Sciences 15 (5). https://doi.org/10.3390/app15052421."
+  }
+]
