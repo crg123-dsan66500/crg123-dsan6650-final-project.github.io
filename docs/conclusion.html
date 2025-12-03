@@ -88,7 +88,7 @@ ul.task-list li input[type="checkbox"] {
   <span class="navbar-toggler-icon"></span>
 </button>
           <div class="collapse navbar-collapse" id="navbarCollapse">
-            <ul class="navbar-nav navbar-nav-scroll me-auto">
+            <ul class="navbar-nav navbar-nav-scroll ms-auto">
   <li class="nav-item">
     <a class="nav-link" href="./introduction.html"> 
 <span class="menu-text">Introduction</span></a>
@@ -117,8 +117,6 @@ ul.task-list li input[type="checkbox"] {
     <a class="nav-link" href="./references.html"> 
 <span class="menu-text">References</span></a>
   </li>  
-</ul>
-            <ul class="navbar-nav navbar-nav-scroll ms-auto">
   <li class="nav-item compact">
     <a class="nav-link" href="https://github.com/courtneyrgreen/dsan6650-final-project.github.io.git"> <i class="bi bi-github" role="img">
 </i> 
@@ -140,10 +138,7 @@ ul.task-list li input[type="checkbox"] {
     <h2 id="toc-title">On this page</h2>
    
   <ul>
-  <li><a href="#conclusion-and-future-work" id="toc-conclusion-and-future-work" class="nav-link active" data-scroll-target="#conclusion-and-future-work">Conclusion and Future Work</a>
-  <ul class="collapse">
-  <li><a href="#future-directions" id="toc-future-directions" class="nav-link" data-scroll-target="#future-directions">Future directions</a></li>
-  </ul></li>
+  <li><a href="#future-directions" id="toc-future-directions" class="nav-link active" data-scroll-target="#future-directions">Future directions</a></li>
   </ul>
 </nav>
     </div>
@@ -169,8 +164,6 @@ ul.task-list li input[type="checkbox"] {
 </header>
 
 
-<section id="conclusion-and-future-work" class="level1">
-<h1>Conclusion and Future Work</h1>
 <p>The results highlight a central theme running through reinforcement learning for operations problems: an agent’s behavior reflects the reward it is given, not the metric by which humans ultimately judge success. In the Tiny Bakery environment, the Newsvendor heuristic achieves the highest profit precisely because it embraces a strategy that the RL reward discourages—producing aggressively, holding inventory buffers, and accepting waste as a necessary cost of maintaining service levels.</p>
 <p>PPO, by contrast, optimizes a composite reward that places substantial weight on wait times, abandonment, and leftover inventory. Within that objective, the agent behaves exactly as expected: it adopts a conservative baking policy that minimizes exposure to negative reward terms but sacrifices throughput, service quality, and ultimately profit. The pricing bandit reinforces this pattern when trained on the same composite reward, and even the profit-only version can only shift behavior modestly because pricing cannot relieve the underlying capacity bottlenecks in ovens and queue dynamics. These findings echo trends reported in recent work on RL for perishable goods, service systems, and dynamic pricing, where agents often appear “suboptimal” on business metrics while being entirely optimal under the shaped reward.</p>
 <p>Rather than identifying algorithmic failure, the experiments surface the deeper issue of <strong>objective misalignment</strong>—a challenge that is widely recognized in the RL-for-operations literature and remains an active research area.</p>
@@ -190,7 +183,6 @@ Value-based or distributional methods may behave differently under the same rewa
 <p>Taken together, these findings suggest that the primary challenge in this domain is not improving PPO or adding more architectural sophistication, but determining how to encode the bakery’s operational objectives into a reward formulation the agent can meaningfully optimize. The experiments here provide a detailed diagnosis of the misalignment and lay the groundwork for the next generation of RL agents that better reflect real-world business priorities.</p>
 
 
-</section>
 </section>
 
 </main> <!-- /main -->

@@ -8,31 +8,47 @@ format:
     embed-resources: true
 ---
 
+## Abstract
 
-## Abstract 
+This project examines reward–behavior alignment in a capacity‑constrained production setting. A custom “Bellman’s Bakery” environment models a single day with two ovens, stochastic arrivals, patience/abandonment, and five products. PPO and QRDQN are evaluated against heuristics. Under a shaped reward that heavily penalizes leftovers and delay, learning converges to conservative policies that under‑produce to avoid waste. Pricing adjustments provide limited leverage because oven throughput is the binding constraint. Profit‑aligned evaluation yields modest increases in service and profit but does not remove the bottleneck. Findings highlight that reward design and structural constraints dominate performance more than the specific deep RL algorithm.
 
+## Demo
 
-Table of Contents:
+A short viewer clip of one simulated day (Newsvendor baseline) is embedded below.
+
+<video controls src="videos/viewer_index_demo.mp4" width="720">
+  Your browser does not support the video tag.
+</video>
+
+<p style="margin-top:6px;color:#666;">Clip shows baking/serving decisions, oven progress, queue, and current action.</p>
+
+Quickstart and viewer controls are documented in the project README.
+
+## Table of Contents
 
 1. [Introduction](introduction.html)
 2. [Environment](environment.html)
 3. [Methods](methods.html)
 4. [Results](results.html)
-5. [Analysis & Discussion](analysis_discussion.html)
-6. [Conclusion & Future Work](conclusion_future_work.html)
+5. [Analysis & Discussion](analysis.html)
+6. [Conclusion & Future Work](conclusion.html)
 7. [References](references.html)
 
+## Overview
 
+Bellman’s Bakery is a pastel, “tiny bakery tycoon” environment used to study reward–behavior alignment in deep RL. Each episode is a single day with two ovens, five products, stochastic arrivals, and customer patience/abandonment. The work evaluates PPO and QRDQN alongside simple baselines and price bandits under capacity constraints.
 
-# Bellman's Bakery
+At a glance:
+- Environment: two-oven production with queueing, bake times, sizes, and yields.
+- Algorithms: PPO (masking) and QRDQN; bandit pricing for daily multipliers.
+- Baselines: newsvendor, bake‑to‑par, greedy‑queue.
+- Key finding: shaped rewards that over‑penalize leftovers/delay lead to conservative, under‑producing policies; pricing has limited leverage under throughput bottlenecks.
 
-A cute pastel “Tiny Bakery Tycoon” reinforcement learning project. Each episode is one day at a small bakery with 2 ovens, limited capacity, 5 pastries, and real-time queues. Customers arrive with skewed preferences and varying patience. The agent plans baking and serving to maximize profit while minimizing waits, abandonment, and waste.
+Run locally (viewer):
 
-What’s inside:
-
-- Methods: PPO with action masking (deep RL) + small Thompson-sampling bandits for daily decisions (shallow RL).
-- Results: Comparison vs heuristic baselines (bake-to-par, greedy-queue, newsvendor) and ablations (price bandit, par bandit).
-- Viewer: A minimal Pygame viewer for a cute visual of the day.
-
-Repo: `bellmans_bakery` environment and consolidated `scripts/*` runner in this project.
+```powershell
+python -m scripts.run_viewer --model models/best_ppo.zip
+# or run a baseline without a model:
+python -m scripts.run_viewer --baseline newsvendor
+```
 

@@ -3,8 +3,6 @@ title: "Conclusion and Future Work"
 format: html
 ---
 
-# Conclusion and Future Work
-
 The results highlight a central theme running through reinforcement learning for operations problems: an agent’s behavior reflects the reward it is given, not the metric by which humans ultimately judge success. In the Tiny Bakery environment, the Newsvendor heuristic achieves the highest profit precisely because it embraces a strategy that the RL reward discourages—producing aggressively, holding inventory buffers, and accepting waste as a necessary cost of maintaining service levels.
 
 PPO, by contrast, optimizes a composite reward that places substantial weight on wait times, abandonment, and leftover inventory. Within that objective, the agent behaves exactly as expected: it adopts a conservative baking policy that minimizes exposure to negative reward terms but sacrifices throughput, service quality, and ultimately profit. The pricing bandit reinforces this pattern when trained on the same composite reward, and even the profit-only version can only shift behavior modestly because pricing cannot relieve the underlying capacity bottlenecks in ovens and queue dynamics. These findings echo trends reported in recent work on RL for perishable goods, service systems, and dynamic pricing, where agents often appear “suboptimal” on business metrics while being entirely optimal under the shaped reward.

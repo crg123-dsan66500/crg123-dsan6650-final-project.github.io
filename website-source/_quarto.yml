@@ -12,7 +12,7 @@ website:
   title: "DSAN 6650 Final Project"
   favicon: "../images/gu-logo.png"
   navbar:
-    left:
+    right:
       - href: introduction.qmd
         text: Introduction
       - href: environment.qmd
@@ -27,8 +27,6 @@ website:
         text: Conclusion
       - href: references.qmd
         text: References
-
-    right:
       - icon: github
         href: "https://github.com/courtneyrgreen/dsan6650-final-project.github.io.git"
 format:
