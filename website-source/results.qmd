@@ -12,15 +12,28 @@ The empirical performance of all agents in Bellman’s Bakery is summarized belo
 
 Metrics aggregate 10 independent seeds; each seed is evaluated for 20 full days (240 ticks/day) under non‑stationary demand. Daily results are averaged per seed and then across seeds to approximate long‑run behavior.
 
-| Policy                     | Net Profit | Abandoned | Avg Wait (s) | Waste |
-|---------------------------|-----------:|----------:|-------------:|------:|
-| Newsvendor (best)         | 95.22      | 1.5%      | 12.7         | 41.1% |
-| PPO v3 best               | 35.28      | 74.7%     | 49.1         | 14.2% |
-| PPO+Price v3 best         | 23.36      | 81.3%     | 52.1         | 37.7% |
-| PPO+Par 1e6               | -20.47     | 91.1%     | 56.0         | 82.8% |
-| PPO+Price (profit-only)   | 25.79      | 83.5%     | 53.2         | 44.5% |
-| QRDQN 1e6                 | 41.32      | 21.2%     | 22.7         | 44.9% |
+Metrics reported:
+- Net Profit ($)
+- Abandoned (% of customers)
+- Avg Wait (seconds)
+- Waste (% of items baked that are discarded)
 
+| Policy                       | Net Profit | Abandoned | Avg Wait (s) | Waste |
+|-----------------------------|-----------:|----------:|-------------:|------:|
+| Newsvendor (baseline)       | 95.22      | 1.5%      | 12.7         | 41.1% |
+| PPO (best)                  | 35.28      | 74.7%     | 49.1         | 14.2% |
+| PPO+Price (best)            | 23.36      | 81.3%     | 52.1         | 37.7% |
+| PPO+Par                     | -20.47     | 91.1%     | 56.0         | 82.8% |
+| PPO+Price (profit-only)     | 25.79      | 83.5%     | 53.2         | 44.5% |
+| QRDQN (best)                | 41.32      | 21.2%     | 22.7         | 44.9% |
+
+Legend (policy definitions):
+- Newsvendor (baseline): static heuristic that bakes toward per‑item targets computed from expected demand (accepts some waste to keep throughput high).
+- PPO (best): MaskablePPO trained on the shaped reward; “best” = highest evaluation net profit (averaged across seeds) among PPO runs.
+- PPO+Price (best): PPO with a Thompson‑sampling daily price multiplier optimized on the composite metric; “best” as above.
+- PPO+Par: PPO augmented with fixed par‑level targets that cap inventory; encourages conservative production.
+- PPO+Price (profit‑only): PPO with a pricing bandit updated on net profit only.
+- QRDQN (best): Quantile Regression DQN under the same reward; “best” selected by evaluation net profit.
 
 ### Interpretation
 
@@ -32,7 +45,7 @@ Bandit variants follow a similar pattern. Composite-metric pricing amplifies the
 
 ## Weekly Aggregation: A check for robustness
 
-To test robustness to non‑stationarity, results are aggregated over 5 consecutive days per seed (20 seeds total), mimicking week‑level operations. Variance increases, but **rank ordering and qualitative behavior remain unchanged**.
+To test robustness to non‑stationarity, results are aggregated over 5 consecutive days per seed (20 seeds total), mimicking week‑level operations. Weekly values are per‑seed averages over those 5 days, then averaged across seeds. Variance increases, but **rank ordering and qualitative behavior remain unchanged**.
 
 | Policy                                  | Net Profit | Abandoned | Avg Wait (s) | Waste |
 |------------------------------------------|-----------:|----------:|-------------:|------:|
@@ -47,24 +60,24 @@ Rankings persist across seeds and week windows, and paired 95% CIs exclude zero,
 
 ## Statistical analysis (per-seed)
  
- Per-seed mean profit and 95% confidence intervals are computed (normal approximation over seed means), and paired differences versus Newsvendor are reported (bootstrap 95% CIs).
+Per-seed mean profit and 95% confidence intervals are reported. Unless noted otherwise, 95% CIs are normal CIs computed over seed means. Paired differences versus Newsvendor use bootstrap 95% CIs on per‑seed mean differences.
  
- | Policy     | Seeds (n) | Mean profit | 95% CI (±) |
- |------------|-----------:|------------:|-----------:|
- | Newsvendor | 10        | 103.21      | 3.95       |
- | PPO        | 10        | 35.28       | 1.07       |
- | QRDQN      | 10        | 41.32       | 11.76      |
+| Policy     | Seeds (n) | Mean profit | 95% CI (±) |
+|------------|-----------:|------------:|-----------:|
+| Newsvendor | 10        | 103.21      | 3.95       |
+| PPO        | 10        | 35.28       | 1.07       |
+| QRDQN      | 10        | 41.32       | 11.76      |
  
- Paired differences vs Newsvendor (per-seed):
- - PPO − Newsvendor: −67.94 (95% CI [−72.11, −63.68], n=10)
- - QRDQN − Newsvendor: −61.89 (95% CI [−71.45, −51.60], n=10)
+Paired differences vs Newsvendor (per-seed):
+- PPO − Newsvendor: −67.94 (95% CI [−72.11, −63.68], n=10)
+- QRDQN − Newsvendor: −61.89 (95% CI [−71.45, −51.60], n=10)
  
- These intervals confirm the large gaps observed in the tables and are not explained by sampling noise.
+These intervals confirm the large gaps observed in the tables and are not explained by sampling noise.
  
 
 ## Training Dynamics
 
-Training stability is assessed via rollout and evaluation reward curves.
+Training stability is assessed via rollout and evaluation reward curves. Curves are smoothed rolling means; higher values indicate better reward performance.
 
 ![](../reports/figs/overlay/rollout_ep_rew_mean_overlay.png){fig-cap="Overlay: rollout episode reward (mean)"}
 
